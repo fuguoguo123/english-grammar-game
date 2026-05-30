@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 小学英语语法大闯关</title>
+    <style>
+        /* ========== 基础重置与全局样式 ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-deep: #0a0e27;
+            --bg-card: rgba(20, 30, 80, 0.85);
+            --accent: #ffd54f;
+            --accent2: #ff9800;
+            --green: #4caf50;
+            --red: #f44336;
+            --blue: #42a5f5;
+            --purple: #ab47bc;
+            --text: #e0e0ff;
+            --text-dim: #9e9ec0;
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --font: 'Comic Sans MS', 'KaiTi', 'STKaiti', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-deep);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ========== 星空背景 ========== */
+        .stars-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            animation: twinkle var(--dur) ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .planet {
+            position: absolute; border-radius: 50%; pointer-events: none;
+            opacity: 0.12; z-index: 0;
+        }
+        .planet-1 { width: 180px; height: 180px; background: radial-gradient(circle, #e8a87c, #d2691e); top: 8%; right: -60px; }
+        .planet-2 { width: 100px; height: 100px; background: radial-gradient(circle, #c8a8e8, #6a1b9a); bottom: 15%; left: -40px; }
+
+        /* ========== 主布局 ========== */
+        .app-container {
+            position: relative; z-index: 1;
+            max-width: 900px; margin: 0 auto; padding: 20px 16px 40px;
+        }
+
+        /* ========== 头部 ========== */
+        .header {
+            text-align: center; margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: clamp(24px, 5vw, 40px);
+            background: linear-gradient(135deg, #ffd54f, #ff9800, #ff7043);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+        .header .rocket {
+            display: inline-block; animation: rocketFloat 3s ease-in-out infinite;
+            font-size: 1.1em;
+        }
+        @keyframes rocketFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-8px) rotate(5deg); }
+        }
+
+        /* ========== 状态栏 ========== */
+        .status-bar {
+            background: var(--bg-card); border-radius: var(--radius);
+            padding: 16px 20px; margin-bottom: 16px;
+            display: flex; flex-wrap: wrap;
+            justify-content: space-between; align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 213, 79, 0.2);
+            box-shadow: var(--shadow);
+        }
+        .status-item {
+            font-size: 14px; color: var(--text);
+            display: flex; align-items: center; gap: 4px;
+            white-space: nowrap;
+        }
+        .status-item .level-badge {
+            display: inline-block; background: linear-gradient(135deg, #ff9800, #f44336);
+            color: #fff; padding: 2px 10px; border-radius: 20px;
+            font-weight: bold; font-size: 12px;
+        }
+        .status-item.stars-today { color: var(--accent); font-weight: bold; }
+        .star-record-btn {
+            background: linear-gradient(135deg, #ffd54f, #ff9800);
+            color: #3e2723; border: none; border-radius: 25px;
+            padding: 8px 18px; font-size: 14px; cursor: pointer;
+            font-family: var(--font); font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+        .star-record-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(255, 152, 0, 0.5);
+        }
+
+        /* ========== 关卡选择区 ========== */
+        .level-select-title {
+            text-align: center; font-size: 20px; margin-bottom: 14px;
+            color: #b8b8e8;
+        }
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px; margin-bottom: 16px;
+        }
+        .level-btn {
+            background: var(--bg-card); border: 2px solid rgba(100, 120, 200, 0.3);
+            color: var(--text); padding: 14px 10px; border-radius: var(--radius-sm);
+            font-size: 15px; cursor: pointer; font-family: var(--font);
+            transition: all 0.25s; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .level-btn:hover:not(:disabled) {
+            border-color: var(--accent); transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 213, 79, 0.25);
+        }
+        .level-btn.active {
+            border-color: var(--accent); background: rgba(255, 213, 79, 0.1);
+        }
+        .level-btn.placeholder {
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .level-btn .btn-icon { display: block; font-size: 24px; margin-bottom: 4px; }
+        .level-btn .btn-stars { font-size: 11px; color: var(--accent); margin-top: 2px; }
+
+        /* ========== 答题区 ========== */
+        .quiz-screen { display: none; }
+        .quiz-screen.visible { display: block; }
+
+        .quiz-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+        }
+        .quiz-progress {
+            font-size: 14px; color: var(--text-dim);
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.1); color: var(--text);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 25px;
+            padding: 8px 20px; font-size: 14px; cursor: pointer;
+            font-family: var(--font); transition: all 0.2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+
+        .challenge-group {
+            text-align: center; font-size: 13px; color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .challenge-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+        .challenge-dot {
+            width: 16px; height: 16px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s;
+        }
+        .challenge-dot.correct { background: var(--green); border-color: var(--green); }
+        .challenge-dot.wrong { background: var(--red); border-color: var(--red); }
+
+        .question-card {
+            background: var(--bg-card); border-radius: var(--radius);
+            padding: 24px 20px; margin-bottom: 16px;
+            border: 1px solid rgba(255, 213, 79, 0.15);
+            box-shadow: var(--shadow);
+        }
+        .question-text {
+            font-size: clamp(18px, 3vw, 24px); text-align: center;
+            margin-bottom: 20px; line-height: 1.6;
+        }
+        .question-text .blank {
+            display: inline-block; border-bottom: 3px dashed var(--accent);
+            min-width: 50px; margin: 0 4px; color: var(--accent);
+        }
+
+        .options-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+        @media (max-width: 500px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+        .option-btn {
+            background: rgba(50, 60, 120, 0.7); border: 2px solid rgba(100, 130, 200, 0.3);
+            color: var(--text); padding: 16px; border-radius: var(--radius-sm);
+            font-size: 16px; cursor: pointer; font-family: var(--font);
+            transition: all 0.2s; text-align: left;
+        }
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--blue); background: rgba(66, 165, 245, 0.1);
+            transform: scale(1.02);
+        }
+        .option-btn.correct-answer {
+            background: rgba(76, 175, 80, 0.3); border-color: var(--green);
+            animation: pulseGreen 0.6s ease-in-out;
+        }
+        .option-btn.wrong-answer {
+            background: rgba(244, 67, 54, 0.3); border-color: var(--red);
+            animation: shake 0.5s ease-in-out;
+        }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        @keyframes pulseGreen {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
+            50% { box-shadow: 0 0 20px 4px rgba(76,175,80,0.6); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* ========== 反馈提示 ========== */
+        .feedback-overlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 100; pointer-events: none;
+            font-size: 48px; animation: feedbackPop 0.8s ease-out forwards;
+        }
+        @keyframes feedbackPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -60%) scale(1); }
+        }
+
+        /* ========== 撒花动画 ========== */
+        .confetti-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 200;
+        }
+        .confetti-piece {
+            position: absolute; width: 12px; height: 12px; top: -20px;
+            animation: confettiFall var(--fall-dur) linear forwards;
+            animation-delay: var(--fall-delay);
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            80% { opacity: 0.9; }
+            100% { transform: translateY(105vh) rotate(var(--rot)) scale(0.5); opacity: 0; }
+        }
+
+        /* ========== 模态弹窗 ========== */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); z-index: 300;
+            display: flex; justify-content: center; align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-overlay.hidden { display: none; }
+        .modal-card {
+            background: linear-gradient(160deg, #1a237e, #283593);
+            border-radius: var(--radius); padding: 28px 24px;
+            max-width: 480px; width: 90%; max-height: 85vh; overflow-y: auto;
+            border: 2px solid rgba(255,213,79,0.3);
+            box-shadow: 0 16px 64px rgba(0,0,0,0.6);
+        }
+        .modal-card h2 { text-align: center; margin-bottom: 16px; color: var(--accent); }
+
+        .calendar-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .calendar-nav button {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text); width: 36px; height: 36px; border-radius: 50%;
+            cursor: pointer; font-size: 18px; font-family: var(--font);
+            transition: all 0.2s;
+        }
+        .calendar-nav button:hover { background: rgba(255,255,255,0.2); }
+        .calendar-nav .month-label { font-size: 18px; font-weight: bold; color: var(--accent); }
+
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+        }
+        .calendar-day-header {
+            text-align: center; font-size: 12px; color: var(--text-dim);
+            padding: 4px 0;
+        }
+        .calendar-day {
+            aspect-ratio: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            border-radius: 50%; font-size: 13px; cursor: default;
+            background: rgba(255,255,255,0.05); transition: all 0.2s;
+            position: relative;
+        }
+        .calendar-day.has-stars {
+            background: rgba(255, 152, 0, 0.35);
+            border: 2px solid var(--accent);
+            color: #fff; font-weight: bold;
+        }
+        .calendar-day.today {
+            border: 2px solid var(--blue);
+        }
+        .calendar-day .star-count {
+            font-size: 9px; color: var(--accent);
+        }
+
+        .modal-close-btn {
+            display: block; margin: 20px auto 0;
+            background: linear-gradient(135deg, #ffd54f, #ff9800);
+            color: #3e2723; border: none; border-radius: 25px;
+            padding: 10px 36px; font-size: 16px; cursor: pointer;
+            font-family: var(--font); font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .modal-close-btn:hover { transform: scale(1.05); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ========== 难度提升弹窗 ========== */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 250; pointer-events: none;
+            background: linear-gradient(135deg, #ff9800, #f44336);
+            color: #fff; padding: 14px 28px; border-radius: 30px;
+            font-size: 18px; font-weight: bold; font-family: var(--font);
+            animation: toastAnim 1.5s ease-out forwards;
+            box-shadow: 0 8px 32px rgba(255, 152, 0, 0.5);
+        }
+        @keyframes toastAnim {
+            0% { opacity: 0; transform: translate(-50%, -30px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            75% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 星空背景 -->
+    <div class="stars-container" id="starsContainer"></div>
+    <div class="planet planet-1"></div>
+    <div class="planet planet-2"></div>
+
+    <div class="app-container">
+        <!-- 头部标题 -->
+        <div class="header">
+            <h1><span class="rocket">🚀</span> 语法大闯关</h1>
+        </div>
+
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-item" id="statusLevel">关卡：be动词 <span class="level-badge">Lv.1</span></div>
+            <div class="status-item" id="statusCount">已答 0/100 题</div>
+            <div class="status-item stars-today" id="statusTodayStars">今日⭐×0</div>
+            <div class="status-item" id="statusTotalStars">总⭐×0</div>
+            <button class="star-record-btn" id="starRecordBtn">📅 星星记录</button>
+        </div>
+
+        <!-- 关卡选择区 -->
+        <div id="levelSelect">
+        <div class="level-select-title">选择语法关卡开始闯关 ▼</div>
+        <div class="level-grid" id="levelGrid">
+            <!-- JS动态生成 -->
+        </div>
+        </div>
+
+        <!-- 答题区 -->
+        <div class="quiz-screen" id="quizScreen">
+            <div class="quiz-header">
+                <span class="quiz-progress" id="quizProgress">Lv.1 · 第 1/5 题</span>
+                <button class="back-btn" id="backBtn">← 返回关卡选择</button>
+            </div>
+            <div class="challenge-group">🏆 第 1 组挑战</div>
+            <div class="challenge-dots" id="challengeDots">
+                <span class="challenge-dot"></span>
+                <span class="challenge-dot"></span>
+                <span class="challenge-dot"></span>
+                <span class="challenge-dot"></span>
+                <span class="challenge-dot"></span>
+            </div>
+            <div class="question-card">
+                <div class="question-text" id="questionText"></div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+        </div>
+
+        <!-- 星星记录弹窗 -->
+        <div class="modal-overlay hidden" id="starModal">
+            <div class="modal-card">
+                <h2>📅 每日星星记录</h2>
+                <div class="calendar-nav">
+                    <button id="calendarPrev">◀</button>
+                    <span class="month-label" id="calendarMonthLabel"></span>
+                    <button id="calendarNext">▶</button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <button class="modal-close-btn" id="modalCloseBtn">关闭</button>
+            </div>
+        </div>
+
+        <!-- 反馈动画层 -->
+        <div id="feedbackLayer"></div>
+        <!-- 撒花层 -->
+        <div class="confetti-container" id="confettiLayer"></div>
+    </div>
+
+    <script>
+    /* ================================================================
+     *  🚀 小学英语语法大闯关 — 选择题特训
+     *  纯 HTML/CSS/JS 实现，太空主题单页应用
+     *  
+     *  当前版本：be动词关卡完整实现，其他关卡占位
+     * ================================================================ */
+
+    // ==================== 音频系统 ====================
+    const AudioSystem = {
+        ctx: null,
+        init() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+        },
+
+        playTone(freq, type, duration, vol = 0.15, rampDown = true) {
+            if (!this.ctx) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            if (rampDown) {
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            }
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        },
+
+        playCorrect() {
+            this.playTone(523.25, 'sine', 0.15, 0.12);
+            setTimeout(() => this.playTone(659.25, 'sine', 0.15, 0.12), 100);
+            setTimeout(() => this.playTone(783.99, 'sine', 0.15, 0.2), 200);
+        },
+
+        playWrong() {
+            this.playTone(200, 'square', 0.25, 0.08);
+            setTimeout(() => this.playTone(180, 'square', 0.25, 0.15), 120);
+        },
+
+        playPerfect() {
+            const notes = [523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, i) => {
+                setTimeout(() => this.playTone(freq, 'sine', 0.2, 0.15), i * 120);
+            });
+        },
+
+        playLevelUp() {
+            const notes = [392, 523.25, 659.25, 783.99, 1046.5];
+            notes.forEach((freq, i) => {
+                setTimeout(() => this.playTone(freq, 'triangle', 0.3, 0.18), i * 100);
+            });
+        }
+    };
+
+    // ==================== 工具函数 ====================
+    function getTodayKey() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = randInt(0, i);
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+
+    function pickRandom(arr) {
+        return arr[randInt(0, arr.length - 1)];
+    }
+
+    // ==================== localStorage 管理 ====================
+    const STORAGE_KEY = 'grammar_game_v4';
+
+    function loadGameData() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) return JSON.parse(raw);
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+
+    function saveGameData(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) { /* ignore */ }
+    }
+
+    function getDefaultGameData() {
+        return {
+            currentLevel: 'beVerb',
+            levels: {
+                beVerb: { totalAnswered: 0, difficulty: 1, stars: 0,
+                          groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                nounPlural: { totalAnswered: 0, difficulty: 1, stars: 0,
+                              groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                pronoun: { totalAnswered: 0, difficulty: 1, stars: 0,
+                           groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                article: { totalAnswered: 0, difficulty: 1, stars: 0,
+                           groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                preposition: { totalAnswered: 0, difficulty: 1, stars: 0,
+                               groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                presentSimple: { totalAnswered: 0, difficulty: 1, stars: 0,
+                                 groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                presentContinuous: { totalAnswered: 0, difficulty: 1, stars: 0,
+                                     groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                futureTense: { totalAnswered: 0, difficulty: 1, stars: 0,
+                               groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                questionWord: { totalAnswered: 0, difficulty: 1, stars: 0,
+                                groupAnswered: 0, groupCorrect: [true,true,true,true,true] },
+                sentenceTransform: { totalAnswered: 0, difficulty: 1, stars: 0,
+                                     groupAnswered: 0, groupCorrect: [true,true,true,true,true] }
+            },
+            dailyStars: {}
+        };
+    }
+
+    // ==================== 游戏状态 ====================
+    let gameData = loadGameData();
+    if (!gameData) {
+        gameData = getDefaultGameData();
+        saveGameData(gameData);
+    }
+
+    function getCurrentLevelData() {
+        return gameData.levels[gameData.currentLevel];
+    }
+
+    function getTotalStars() {
+        return Object.values(gameData.levels).reduce((sum, lv) => sum + lv.stars, 0);
+    }
+
+    function getTodayStars() {
+        const key = getTodayKey();
+        return gameData.dailyStars[key] || 0;
+    }
+
+    function addStar() {
+        const ld = getCurrentLevelData();
+        ld.stars++;
+        const key = getTodayKey();
+        gameData.dailyStars[key] = (gameData.dailyStars[key] || 0) + 1;
+        saveGameData(gameData);
+        updateStatusBar();
+    }
+
+    // ==================== be动词题目生成系统 ====================
+    const BeVerbData = {
+        // 主语池
+        subjectsSimple: ['I', 'you', 'he', 'she', 'it', 'Tom', 'Mary', 'my sister', 'my brother', 'the teacher'],
+        subjectsPlural: ['we', 'they', 'the boys', 'the girls', 'the students',
+                         'my friends', 'the dogs', 'the cats', 'Tom and Jerry', 'the children'],
+        subjectsUncount: ['water', 'milk', 'rice', 'music', 'homework', 'time', 'money', 'information', 'bread', 'sugar'],
+        subjectsAbstract: ['happiness', 'love', 'knowledge', 'education', 'practice', 'success', 'health', 'weather'],
+        subjectsCompound: ['Tom and Jerry', 'the teacher and the student', 'my mother and I',
+                           'the cat and the dog', 'she and I', 'he and she'],
+        subjectsCollective: ['the team', 'the family', 'the class', 'the group', 'the committee'],
+
+        // 表语池
+        complementsNouns: ['a student', 'a teacher', 'a doctor', 'a pilot', 'an artist',
+                           'a singer', 'a dancer', 'a writer', 'a cook', 'a nurse'],
+        complementsAdjectives: ['happy', 'tall', 'short', 'big', 'small', 'hungry', 'tired',
+                                'busy', 'sick', 'strong', 'brave', 'shy', 'kind', 'clever',
+                                'beautiful', 'young', 'old', 'fast', 'quiet', 'loud'],
+        complementsPlaces: ['at school', 'at home', 'in the classroom', 'in the park',
+                            'in the library', 'at the zoo', 'on the playground',
+                            'at the hospital', 'in Beijing', 'at the party'],
+
+        // 干扰项模板
+        distractorBe: ['is', 'am', 'are', 'be'],
+        distractorAdv: ['is', 'are', 'being', 'been'],
+        distractorSpell: ['is', 'are', 'iz', 'ar']
+    };
+
+    /**
+     * 判断主语应该用 am / is / are
+     */
+    function getBeVerb(subject) {
+        if (subject === 'I' || subject === 'i') return 'am';
+        if (['he', 'she', 'it', 'Tom', 'Mary'].includes(subject)) return 'is';
+        // 单数专有名词
+        if (['my sister', 'my brother', 'the teacher'].includes(subject)) return 'is';
+        // 复数
+        if (['we', 'they', 'the boys', 'the girls', 'the students',
+             'my friends', 'the dogs', 'the cats', 'Tom and Jerry',
+             'the children'].includes(subject)) return 'are';
+        if (subject.includes(' and ')) return 'are';
+        // 不可数名词和抽象名词用 is
+        if (BeVerbData.subjectsUncount.includes(subject)) return 'is';
+        if (BeVerbData.subjectsAbstract.includes(subject)) return 'is';
+        if (BeVerbData.subjectsCollective.includes(subject)) return 'is';
+        if (BeVerbData.subjectsCompound.includes(subject)) return 'are';
+        // 默认
+        if (subject === 'you') return 'are';
+        if (subject.startsWith('my ') || subject.startsWith('the ')) {
+            if (subject.endsWith('s') && !subject.endsWith('ss')) return 'are';
+            return 'is';
+        }
+        return 'is';
+    }
+
+    function pickSubject(level) {
+        const d = BeVerbData;
+        switch (level) {
+            case 1: return pickRandom(d.subjectsSimple);
+            case 2: {
+                const pool = [...d.subjectsSimple, ...d.subjectsPlural.slice(0, 4),
+                              ...d.subjectsUncount.slice(0, 3)];
+                return pickRandom(pool);
+            }
+            case 3: {
+                const pool = [...d.subjectsSimple, ...d.subjectsPlural.slice(0, 3)];
+                return pickRandom(pool);
+            }
+            case 4: return pickRandom([...d.subjectsSimple, ...d.subjectsPlural.slice(0, 2),
+                                       ...d.subjectsCollective]);
+            case 5: return pickRandom([...d.subjectsCompound, ...d.subjectsAbstract,
+                                       ...d.subjectsCollective]);
+            default: return pickRandom(d.subjectsSimple);
+        }
+    }
+
+    function pickComplement(level) {
+        const d = BeVerbData;
+        switch (level) {
+            case 1: return pickRandom([...d.complementsNouns.slice(0, 5),
+                                       ...d.complementsAdjectives.slice(0, 6)]);
+            case 2: return pickRandom([...d.complementsAdjectives,
+                                       ...d.complementsPlaces.slice(0, 4)]);
+            case 3: return pickRandom([...d.complementsAdjectives,
+                                       ...d.complementsPlaces]);
+            case 4: return pickRandom([...d.complementsNouns,
+                                       ...d.complementsAdjectives,
+                                       ...d.complementsPlaces]);
+            case 5: return pickRandom([...d.complementsAdjectives.slice(8),
+                                       ...d.complementsPlaces.slice(4)]);
+            default: return pickRandom(d.complementsNouns.slice(0, 4));
+        }
+    }
+
+    /**
+     * 生成be动词选择题
+     * @param {number} difficulty - 难度等级 1-5
+     * @returns {{question: string, options: string[], correct: number, key: string}}
+     */
+    function generateBeVerbQuestion(difficulty) {
+        let subject, complement, correctBe, question, options = [], correctIndex, mode;
+
+        switch (difficulty) {
+            case 1: {
+                // Lv.1: 简单人称/单数名词 + 肯定句，选项为 am/is/are
+                subject = pickSubject(1);
+                complement = pickComplement(1);
+                correctBe = getBeVerb(subject);
+                question = `${subject} ___ ${complement}.`;
+                options = shuffle(['am', 'is', 'are', 'be']);
+                correctIndex = options.indexOf(correctBe);
+                break;
+            }
+            case 2: {
+                // Lv.2: 加入复数和不可数名词，干扰项更相似
+                subject = pickSubject(2);
+                complement = pickComplement(2);
+                correctBe = getBeVerb(subject);
+                question = `${subject} ___ ${complement}.`;
+                options = shuffle(['am', 'is', 'are', 'being']);
+                correctIndex = options.indexOf(correctBe);
+                break;
+            }
+            case 3: {
+                // Lv.3: 否定句和疑问句
+                mode = Math.random() > 0.5 ? 'negative' : 'question';
+                subject = pickSubject(3);
+                complement = pickComplement(3);
+                correctBe = getBeVerb(subject);
+
+                if (mode === 'negative') {
+                    const negForm = correctBe === 'am' ? 'am not' : correctBe + ' not';
+                    question = `${subject} ___ ${complement}. (否定句)`;
+                    const contrForm = correctBe === 'am' ? 'am not' :
+                                      (correctBe === 'is' ? "isn't" : "aren't");
+                    options = shuffle([negForm, contrForm,
+                                       "don't be", correctBe === 'am' ? "amn't" : "don't"]);
+                } else {
+                    question = `___ ${subject} ${complement}?`;
+                    const cap = correctBe.charAt(0).toUpperCase() + correctBe.slice(1);
+                    options = shuffle([cap, 'Is', 'Are', 'Am']);
+                }
+                correctIndex = options.findIndex(opt => {
+                    const lo = opt.toLowerCase();
+                    if (mode === 'negative') {
+                        return lo === (correctBe + ' not') || lo === correctBe + "n't" ||
+                               (correctBe === 'am' && lo === 'am not');
+                    }
+                    return lo === correctBe;
+                });
+                if (correctIndex === -1) correctIndex = 0;
+                break;
+            }
+            case 4: {
+                // Lv.4: 混合时态干扰（加入 being/been）
+                subject = pickSubject(4);
+                complement = pickComplement(4);
+                correctBe = getBeVerb(subject);
+                question = `${subject} ___ ${complement}.`;
+                options = shuffle(['am', 'is', 'are', 'being', 'been']).slice(0, 4);
+                if (!options.includes(correctBe)) {
+                    options[randInt(0, 3)] = correctBe;
+                }
+                correctIndex = options.indexOf(correctBe);
+                break;
+            }
+            case 5: {
+                // Lv.5: 复合主语/抽象名词 + 常见错误拼写
+                subject = pickSubject(5);
+                complement = pickComplement(5);
+                correctBe = getBeVerb(subject);
+                mode = Math.random() > 0.6 ? 'negative' : (Math.random() > 0.5 ? 'question' : 'affirmative');
+
+                if (mode === 'negative') {
+                    const negForm = correctBe === 'am' ? 'am not' :
+                                    (correctBe === 'is' ? "isn't" : "aren't");
+                    question = `${subject} ___ ${complement}. (否定)`;
+                    options = shuffle([negForm, "isn't", "aren't", "amn't", "don't"]).slice(0, 4);
+                } else if (mode === 'question') {
+                    question = `___ ${subject} ${complement}?`;
+                    const wrongBe = correctBe === 'is' ? 'Are' : (correctBe === 'are' ? 'Is' : 'Are');
+                    options = shuffle([correctBe.charAt(0).toUpperCase() + correctBe.slice(1),
+                                       wrongBe, 'Do', 'Does']);
+                } else {
+                    question = `${subject} ___ ${complement}.`;
+                    options = shuffle(['is', 'are', 'iz', 'ar', 'am']);
+                    options = options.slice(0, 4);
+                    if (!options.includes(correctBe)) {
+                        options[randInt(0, 3)] = correctBe;
+                    }
+                }
+                correctIndex = options.findIndex(opt => {
+                    const lo = opt.toLowerCase();
+                    return lo === correctBe || lo === (correctBe === 'is' ? "isn't" : correctBe === 'are' ? "aren't" : 'am not');
+                });
+                if (correctIndex === -1) {
+                    options[randInt(0, 3)] = correctBe;
+                    correctIndex = options.indexOf(correctBe);
+                }
+                break;
+            }
+            default:
+                return generateBeVerbQuestion(1);
+        }
+
+        // 生成唯一 key
+        const key = `BV_${subject.replace(/\s/g,'')}_${complement.replace(/\s/g,'')}_${difficulty}`;
+
+        // 格式化为 A. B. C. D.
+        const formattedOptions = options.map((opt, i) => `${['A','B','C','D'][i]}. ${opt}`);
+
+        return { question, options: formattedOptions, correct: correctIndex, key };
+    }
+
+    // ==================== 统一题目调度 ====================
+    function generateQuestion(levelId, difficulty) {
+        switch (levelId) {
+            case 'beVerb': return generateBeVerbQuestion(difficulty);
+            case 'nounPlural': return generateNounPluralQuestion(difficulty);
+            case 'pronoun': return generatePronounQuestion(difficulty);
+            case 'article': return generateArticleQuestion(difficulty);
+            case 'preposition': return generatePrepositionQuestion(difficulty);
+            case 'presentSimple': return generatePresentSimpleQuestion(difficulty);
+            case 'presentContinuous': return generatePresentContinuousQuestion(difficulty);
+            case 'futureTense': return generateFutureTenseQuestion(difficulty);
+            case 'questionWord': return generateQuestionWordQuestion(difficulty);
+            case 'sentenceTransform': return generateSentenceTransformQuestion(difficulty);
+            default: return generateBeVerbQuestion(difficulty);
+        }
+    }
+
+    // ==================== 名词复数关卡 ====================
+    const NounPluralData = {
+        regularS: ['cat','dog','book','pen','cup','chair','desk','bird','rabbit','tiger','lion','rabbit','panda','zebra','monkey','banana','apple','orange','flower','tree'],
+        regularES: ['box','bus','watch','dish','brush','fox','glass','class','dress','peach'],
+        ies: ['baby','lady','city','story','cherry','puppy','country','family','berry','party'],
+        ves: ['leaf','wolf','knife','shelf','thief','wife','life','loaf','calf','half'],
+        irregular: {
+            'child':'children','man':'men','woman':'women','foot':'feet','tooth':'teeth',
+            'mouse':'mice','goose':'geese','ox':'oxen','person':'people',
+            'sheep':'sheep','fish':'fish','deer':'deer'
+        }
+    };
+
+    function generateNounPluralQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = NounPluralData;
+
+        switch (difficulty) {
+            case 1: {
+                let noun = pickRandom(d.regularS);
+                correct = noun + 's';
+                question = `"${noun}" 的复数形式是什么？`;
+                options = shuffle([correct, noun, noun + 'es', noun + 'ies']);
+                break;
+            }
+            case 2: {
+                let noun = pickRandom(d.regularES);
+                correct = noun + 'es';
+                question = `"${noun}" 的复数形式是什么？`;
+                options = shuffle([correct, noun + 's', noun, correct + 's']);
+                break;
+            }
+            case 3: {
+                let sing = pickRandom(Object.keys(d.irregular).filter(k => !d.irregular[k].match(/^(sheep|fish|deer)$/)));
+                correct = d.irregular[sing];
+                question = `"${sing}" 的复数形式是什么？`;
+                options = shuffle([correct, sing + 's', sing + 'es', sing + 'ies']);
+                break;
+            }
+            case 4: {
+                let noun = pickRandom(d.ies);
+                correct = noun.slice(0,-1) + 'ies';
+                question = `"${noun}" 的复数形式是什么？`;
+                options = shuffle([correct, noun + 's', noun + 'es', noun.slice(0,-1) + 'ys']);
+                break;
+            }
+            case 5: {
+                let type = Math.random();
+                if (type < 0.25) {
+                    let noun = pickRandom(d.regularES);
+                    correct = noun + 'es';
+                    question = `There are two ___ on the desk. (${noun})`;
+                    options = shuffle([correct, noun+'s', noun, correct+'s']);
+                } else if (type < 0.5) {
+                    let sing = pickRandom(Object.keys(d.irregular));
+                    correct = d.irregular[sing];
+                    question = `I saw many ___ in the park. (${sing})`;
+                    options = shuffle([correct, sing+'s', sing+'es', sing+'ies']);
+                } else if (type < 0.75) {
+                    let noun = pickRandom(d.ies);
+                    correct = noun.slice(0,-1) + 'ies';
+                    question = `Two ___ are playing. (${noun})`;
+                    options = shuffle([correct, noun+'s', noun+'es', noun.slice(0,-1)+'ys']);
+                } else {
+                    let noun = pickRandom(d.ves);
+                    correct = noun.slice(0,-1) + 'ves';
+                    question = `The ___ fell from the tree. (${noun}的复数)`;
+                    options = shuffle([correct, noun+'s', noun.slice(0,-1)+'fs', noun+'es']);
+                }
+                break;
+            }
+            default: return generateNounPluralQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `NP_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 代词与物主代词关卡 ====================
+    const PronounData = {
+        subject: ['I','you','he','she','it','we','they'],
+        object: ['me','you','him','her','it','us','them'],
+        possAdj: ['my','your','his','her','its','our','their'],
+        possPro: ['mine','yours','his','hers','its','ours','theirs'],
+        demonstrative: ['this','that','these','those']
+    };
+
+    function generatePronounQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = PronounData;
+
+        switch (difficulty) {
+            case 1: {
+                let subj = pickRandom(['I','he','she','we','they']);
+                let verb = subj==='I'?'am':(subj==='he'||subj==='she'?'is':'are');
+                correct = subj;
+                question = `___ ${verb} a student. (选择正确的主格代词)`;
+                options = shuffle(d.subject.slice());
+                break;
+            }
+            case 2: {
+                let obj = pickRandom(['me','him','her','us','them']);
+                let verb = pickRandom(['likes','knows','sees','loves','helps']);
+                correct = obj;
+                question = `She ${verb} ___. (选择正确的宾格代词)`;
+                options = shuffle(d.object.slice());
+                break;
+            }
+            case 3: {
+                let pa = pickRandom(['my','his','her','our','their']);
+                correct = pa;
+                question = `This is ___ book. (选择正确的物主形容词)`;
+                options = shuffle(d.possAdj.slice());
+                break;
+            }
+            case 4: {
+                let pp = pickRandom(['mine','his','hers','ours','theirs']);
+                correct = pp;
+                question = `This book is ___. (选择正确的物主代词)`;
+                options = shuffle(d.possPro.slice());
+                break;
+            }
+            case 5: {
+                let type = Math.random();
+                if (type < 0.33) {
+                    let pa = pickRandom(d.possAdj);
+                    correct = pa;
+                    question = `___ bag is over there.`;
+                    options = shuffle(d.possAdj.slice());
+                } else if (type < 0.66) {
+                    let pp = pickRandom(d.possPro);
+                    correct = pp;
+                    question = `The red one is ___.`;
+                    options = shuffle(d.possPro.slice());
+                } else {
+                    let demo = pickRandom(d.demonstrative);
+                    correct = demo;
+                    let isPlural = demo==='these'||demo==='those';
+                    question = isPlural ? `___ are my books.` : `___ is my book.`;
+                    options = shuffle(d.demonstrative.slice());
+                }
+                break;
+            }
+            default: return generatePronounQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `PR_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 冠词 a/an/the 关卡 ====================
+    const ArticleData = {
+        vowelNouns: ['apple','orange','egg','elephant','umbrella','eye','ear','hour','ice cream','ant','octopus','eagle'],
+        consonantNouns: ['cat','dog','book','bag','cup','pen','chair','teacher','student','boy','girl','school','car','house'],
+        uniqueNouns: ['sun','moon','earth','sky','world'],
+        noArticle: ['breakfast','lunch','dinner','school','bed','home','work']
+    };
+
+    function generateArticleQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = ArticleData;
+
+        switch (difficulty) {
+            case 1: {
+                let isVowel = Math.random() > 0.5;
+                let noun = isVowel ? pickRandom(d.vowelNouns) : pickRandom(d.consonantNouns);
+                correct = isVowel ? 'an' : 'a';
+                question = `This is ___ ${noun}.`;
+                options = shuffle(['a','an','the','/']);
+                break;
+            }
+            case 2: {
+                let noun = pickRandom(d.consonantNouns);
+                let isSpecific = Math.random() > 0.5;
+                correct = isSpecific ? 'the' : 'a';
+                question = isSpecific
+                    ? `___ ${noun} on the desk is mine.`
+                    : `I have ___ ${noun}.`;
+                options = shuffle(['a','an','the','/']);
+                break;
+            }
+            case 3: {
+                let noun = pickRandom(d.uniqueNouns);
+                correct = 'the';
+                question = `Look at ___ ${noun}!`;
+                options = shuffle(['a','an','the','/']);
+                break;
+            }
+            case 4: {
+                let noun = pickRandom(d.noArticle);
+                correct = '/';
+                let verb = noun==='school'||noun==='bed'?'go to':'have';
+                question = `I ${verb} ___ ${noun} every day.`;
+                options = shuffle(['a','an','the','/']);
+                break;
+            }
+            case 5: {
+                let type = Math.random();
+                if (type < 0.33) {
+                    let noun = pickRandom(d.vowelNouns);
+                    correct = 'an';
+                    question = `There is ___ ${noun} on the table.`;
+                    options = shuffle(['a','an','the','/']);
+                } else if (type < 0.66) {
+                    correct = 'the';
+                    question = `___ best student in our class is Tom.`;
+                    options = shuffle(['a','an','the','/']);
+                } else {
+                    correct = 'a';
+                    question = `She is ___ university student.`;
+                    options = shuffle(['a','an','the','/']);
+                }
+                break;
+            }
+            default: return generateArticleQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `AR_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 介词关卡 ====================
+    const PrepositionData = {
+        time: [
+            { phrase:'___ Monday', ans:'on' }, { phrase:'___ the morning', ans:'in' },
+            { phrase:'___ 8 o\'clock', ans:'at' }, { phrase:'___ night', ans:'at' },
+            { phrase:'___ summer', ans:'in' }, { phrase:'___ 2024', ans:'in' }
+        ],
+        place: [
+            { phrase:'___ the table', ans:'on' }, { phrase:'___ the room', ans:'in' },
+            { phrase:'___ the door', ans:'at' }, { phrase:'___ the tree', ans:'under' },
+            { phrase:'___ the door', ans:'behind' }, { phrase:'___ the two chairs', ans:'between' }
+        ],
+        movement: [
+            { phrase:'___ school', ans:'to' }, { phrase:'___ Beijing', ans:'to' },
+            { phrase:'___ home', ans:'to' }, { phrase:'___ the park', ans:'through' }
+        ]
+    };
+
+    function generatePrepositionQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = PrepositionData;
+
+        switch (difficulty) {
+            case 1: {
+                let item = pickRandom(d.time);
+                correct = item.ans;
+                question = `I have class ${item.phrase}.`;
+                options = shuffle(['in','on','at','to']);
+                break;
+            }
+            case 2: {
+                let item = pickRandom(d.place);
+                correct = item.ans;
+                question = `The book is ${item.phrase}.`;
+                options = shuffle(['in','on','at','under']);
+                break;
+            }
+            case 3: {
+                let item = pickRandom(d.movement);
+                correct = item.ans;
+                question = `I go ${item.phrase} every day.`;
+                options = shuffle(['to','from','through','across']);
+                break;
+            }
+            case 4: {
+                let type = Math.random();
+                if (type < 0.5) {
+                    correct = 'between';
+                    question = `The ball is ___ the two chairs.`;
+                    options = shuffle(['between','among','in','on']);
+                } else {
+                    correct = 'behind';
+                    question = `The cat is ___ the door.`;
+                    options = shuffle(['behind','in front of','under','on']);
+                }
+                break;
+            }
+            case 5: {
+                let items = [
+                    { q:'The cat jumped ___ the wall.', a:'over', opts:['over','under','through','behind'] },
+                    { q:'She walked ___ the street.', a:'across', opts:['across','through','over','along'] },
+                    { q:'He came ___ the room quietly.', a:'into', opts:['into','in','to','at'] },
+                    { q:'They sat ___ the fire.', a:'around', opts:['around','through','across','between'] }
+                ];
+                let item = pickRandom(items);
+                correct = item.a;
+                question = item.q;
+                options = shuffle(item.opts);
+                break;
+            }
+            default: return generatePrepositionQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `PP_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 一般现在时关卡 ====================
+    const PresentSimpleData = {
+        subjects: ['I','you','he','she','it','we','they','Tom','Mary','The cat','My father'],
+        verbs: ['play','study','work','live','like','love','hate','want','need','read','write','eat','drink','watch'],
+        irregulars: {'have':'has','go':'goes','do':'does'},
+        adverbs: ['always','usually','often','sometimes','never','rarely'],
+        objects: ['football','piano','homework','English','lunch','dinner','a shower','TV','music','books']
+    };
+
+    function generatePresentSimpleQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = PresentSimpleData;
+
+        switch (difficulty) {
+            case 1: {
+                let subj = pickRandom(['I','you','we','they']);
+                let verb = pickRandom(d.verbs.slice(0,6));
+                correct = verb;
+                question = `${subj} ___ ${verb} every day.`;
+                options = shuffle([verb, verb+'s', verb+'ing', 'will '+verb]);
+                break;
+            }
+            case 2: {
+                let subj = pickRandom(['he','she','it','Tom','Mary']);
+                let verb = pickRandom(d.verbs.slice(0,8));
+                correct = verb + 's';
+                question = `${subj} ___ ${verb} every day.`;
+                options = shuffle([verb, correct, verb+'ing', 'will '+verb]);
+                break;
+            }
+            case 3: {
+                let pair = pickRandom(Object.entries(d.irregulars));
+                let verb = pair[0], sForm = pair[1];
+                let subj = pickRandom(['he','she','it','Tom']);
+                correct = sForm;
+                question = `${subj} ___ to school every day. (${verb})`;
+                options = shuffle([verb, sForm, verb+'ing', 'will '+verb]);
+                break;
+            }
+            case 4: {
+                let subj = pickRandom(d.subjects);
+                let adv = pickRandom(d.adverbs);
+                let verb = pickRandom(d.verbs);
+                let isThirdS = ['he','she','it','Tom','Mary','The cat','My father'].includes(subj);
+                correct = isThirdS ? verb+'s' : verb;
+                question = `${subj} ___ ${adv} ${verb} football.`;
+                options = shuffle([verb, verb+'s', verb+'ing', 'will '+verb]);
+                break;
+            }
+            case 5: {
+                let type = Math.random();
+                if (type < 0.5) {
+                    let subj = pickRandom(['he','she','it','Tom']);
+                    correct = 'doesn\'t';
+                    let verb = pickRandom(d.verbs);
+                    question = `${subj} ___ ${verb} football. (否定句)`;
+                    options = shuffle(["doesn't "+verb, "don't "+verb, verb+'s not', 'not '+verb+'s']);
+                } else {
+                    let subj = pickRandom(['he','she','it']);
+                    correct = 'Does';
+                    let verb = pickRandom(d.verbs);
+                    question = `___ ${subj} ${verb} football?`;
+                    options = shuffle(['Does', 'Do', 'Is', 'Has']);
+                }
+                break;
+            }
+            default: return generatePresentSimpleQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `PS_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 现在进行时关卡 ====================
+    const PresentContinuousData = {
+        subjects: ['I','you','he','she','it','we','they','Tom','Mary','The children','The cat'],
+        actions: ['read','write','play','sleep','run','eat','drink','sing','dance','work','study','watch','cook','clean','swim','draw','paint','fly','jump','walk'],
+        signalWords: ['now','at the moment','right now','Look!','Listen!']
+    };
+
+    function getBeForm(subj) {
+        if (subj === 'I') return 'am';
+        if (['he','she','it','Tom','Mary','The cat'].includes(subj)) return 'is';
+        return 'are';
+    }
+
+    function generatePresentContinuousQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = PresentContinuousData;
+
+        switch (difficulty) {
+            case 1: {
+                let subj = pickRandom(['he','she','it','we','they']);
+                let beF = getBeForm(subj);
+                let action = pickRandom(d.actions.slice(0,6));
+                correct = beF + ' ' + action + 'ing';
+                question = `${subj} ___ now. (${action})`;
+                options = shuffle([correct, action+'s', action, 'will '+action]);
+                break;
+            }
+            case 2: {
+                let subj = pickRandom(d.subjects);
+                let beF = getBeForm(subj);
+                let action = pickRandom(d.actions);
+                correct = beF + ' ' + action + 'ing';
+                question = `${subj} ___ ${action} at the moment.`;
+                let wrongBe = beF==='is'?'are':(beF==='are'?'is':'are');
+                options = shuffle([correct, wrongBe+' '+action+'ing', action+'s', action]);
+                break;
+            }
+            case 3: {
+                let sig = pickRandom(d.signalWords);
+                let subj = pickRandom(['he','she','we','they','The children']);
+                let beF = getBeForm(subj);
+                let action = pickRandom(d.actions);
+                correct = beF + ' ' + action + 'ing';
+                question = `${sig} ${subj} ___ ${action}.`;
+                options = shuffle([correct, action+'s', action, beF+' '+action]);
+                break;
+            }
+            case 4: {
+                let subj = pickRandom(['he','she','it','Tom','Mary']);
+                let action = pickRandom(d.actions);
+                correct = 'isn\'t ' + action + 'ing';
+                question = `${subj} ___ ${action} right now. (否定)`;
+                options = shuffle([correct, "doesn't "+action, 'not '+action+'ing', "don't "+action+'ing']);
+                break;
+            }
+            case 5: {
+                let subj = pickRandom(['he','she','we','they']);
+                let action = pickRandom(d.actions);
+                let beF = getBeForm(subj);
+                correct = beF.charAt(0).toUpperCase() + beF.slice(1);
+                question = `___ ${subj} ${action}ing now?`;
+                options = shuffle([correct, 'Does', 'Do', 'Is']);
+                break;
+            }
+            default: return generatePresentContinuousQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `PC_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 一般将来时关卡 ====================
+    const FutureTenseData = {
+        subjects: ['I','you','he','she','it','we','they','Tom','Mary','The students'],
+        verbs: ['go','play','study','work','visit','see','meet','travel','leave','come','buy','build','eat','drink','read','write','teach','learn'],
+        timeWords: ['tomorrow','next week','next month','next year','tonight','soon','later','in the future'],
+        weather: ['It will rain tomorrow.','It will snow next week.','It will be sunny.','It will be cloudy.']
+    };
+
+    function generateFutureTenseQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = FutureTenseData;
+
+        switch (difficulty) {
+            case 1: {
+                let subj = pickRandom(d.subjects.slice(0,7));
+                let verb = pickRandom(d.verbs.slice(0,6));
+                let tw = pickRandom(d.timeWords.slice(0,3));
+                correct = 'will ' + verb;
+                question = `${subj} ___ ${verb} ${tw}.`;
+                options = shuffle([correct, verb, verb+'s', verb+'ing']);
+                break;
+            }
+            case 2: {
+                let subj = pickRandom(['I','he','she','we','they']);
+                let verb = pickRandom(d.verbs.slice(0,5));
+                let beForm = getBeForm(subj);
+                correct = beForm + ' going to ' + verb;
+                question = `${subj} ___ ${verb} tomorrow.`;
+                options = shuffle([correct, 'will '+verb, verb+'s', verb+'ing']);
+                break;
+            }
+            case 3: {
+                let subj = pickRandom(['I','he','she','we','they']);
+                let verb = pickRandom(d.verbs);
+                let tw = pickRandom(d.timeWords);
+                let useWill = Math.random() > 0.5;
+                correct = useWill ? 'will ' + verb : getBeForm(subj) + ' going to ' + verb;
+                question = `${subj} ___ ${verb} ${tw}.`;
+                options = shuffle([correct, verb, verb+'s', verb+'ing']);
+                break;
+            }
+            case 4: {
+                let subj = pickRandom(['he','she','it','Tom']);
+                let verb = pickRandom(d.verbs);
+                correct = 'won\'t ' + verb;
+                question = `${subj} ___ ${verb} tomorrow. (否定)`;
+                options = shuffle([correct, "doesn't "+verb, 'not will '+verb, "don't "+verb]);
+                break;
+            }
+            case 5: {
+                let subj = pickRandom(['he','she','we','they']);
+                let verb = pickRandom(d.verbs);
+                correct = 'Will';
+                question = `___ ${subj} ${verb} tomorrow?`;
+                options = shuffle(['Will', 'Do', 'Does', 'Are']);
+                break;
+            }
+            default: return generateFutureTenseQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `FT_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 疑问词关卡 ====================
+    const QuestionWordData = {
+        pairs: [
+            { q:'What is your name?', a:'What' },
+            { q:'Who is your teacher?', a:'Who' },
+            { q:'Where do you live?', a:'Where' },
+            { q:'When is your birthday?', a:'When' },
+            { q:'Why are you sad?', a:'Why' },
+            { q:'How do you go to school?', a:'How' },
+            { q:'Whose book is this?', a:'Whose' },
+            { q:'Which color do you like?', a:'Which' },
+            { q:'What time is it?', a:'What' },
+            { q:'How old are you?', a:'How' }
+        ],
+        answers: {
+            'What..?':['It is a book.','I am reading.','My name is Tom.'],
+            'Who..?':['It is Tom.','My mother.','The teacher.'],
+            'Where..?':['In Beijing.','At school.','At home.'],
+            'When..?':['Tomorrow.','At 8 o\'clock.','Next week.'],
+            'Why..?':['Because I was sick.','Because it is fun.'],
+            'How..?':['By bus.','I am fine.','Very well.'],
+            'Whose..?':['It is mine.','Tom\'s.','My sister\'s.'],
+            'Which..?':['The red one.','This one.','That book.']
+        }
+    };
+
+    function generateQuestionWordQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+        const d = QuestionWordData;
+
+        switch (difficulty) {
+            case 1: {
+                let pair = pickRandom(d.pairs.slice(0,3));
+                correct = pair.a;
+                question = `"___ is your name?" - "My name is Tom."`;
+                options = shuffle(['What','Who','Where','When']);
+                break;
+            }
+            case 2: {
+                let pair = pickRandom(d.pairs.slice(3,6));
+                correct = pair.a;
+                let ans = pair.a==='Where'?'In the park.':(pair.a==='When'?'Tomorrow.':'Because it is fun.');
+                question = `"___ do you play?" - "${ans}"`;
+                options = shuffle(['What','Who','Where','When','Why'].slice(0,4));
+                break;
+            }
+            case 3: {
+                let pair = pickRandom(d.pairs.slice(5,8));
+                correct = pair.a;
+                let ans = pair.a==='How'?'By bus.':(pair.a==='Why'?'Because I was sick.':'Tom\'s.');
+                question = `"___ do you go to school?" - "${ans}"`;
+                options = shuffle(['What','How','Why','When']);
+                break;
+            }
+            case 4: {
+                let items = [
+                    { q:'"___ bag is this?" - "It is mine."', a:'Whose', opts:['Whose','Who','What','Which'] },
+                    { q:'"___ one do you want?" - "The red one."', a:'Which', opts:['Which','What','Who','Whose'] },
+                    { q:'"___ old are you?" - "I am 10."', a:'How', opts:['How','What','Who','When'] }
+                ];
+                let item = pickRandom(items);
+                correct = item.a;
+                question = item.q;
+                options = shuffle(item.opts);
+                break;
+            }
+            case 5: {
+                let items = [
+                    { q:'___ is the weather like today?', a:'What', opts:['What','How','Who','Where'] },
+                    { q:'___ does she look like?', a:'What', opts:['What','How','Who','Where'] },
+                    { q:'___ far is it from here?', a:'How', opts:['How','What','Where','When'] },
+                    { q:'___ often do you exercise?', a:'How', opts:['How','What','When','Where'] }
+                ];
+                let item = pickRandom(items);
+                correct = item.a;
+                question = item.q;
+                options = shuffle(item.opts);
+                break;
+            }
+            default: return generateQuestionWordQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `QW_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 句型转换关卡 ====================
+    const SentenceTransformData = {
+        affirmative: [
+            { sub:'I', verb:'am', rest:'a student.' },
+            { sub:'He', verb:'is', rest:'tall.' },
+            { sub:'She', verb:'is', rest:'a teacher.' },
+            { sub:'They', verb:'are', rest:'happy.' },
+            { sub:'We', verb:'are', rest:'friends.' },
+            { sub:'It', verb:'is', rest:'big.' }
+        ],
+        presentVerbs: [
+            { sub:'I', verb:'play', obj:'football.' },
+            { sub:'He', verb:'plays', obj:'football.' },
+            { sub:'She', verb:'reads', obj:'books.' },
+            { sub:'They', verb:'study', obj:'English.' }
+        ]
+    };
+
+    function generateSentenceTransformQuestion(difficulty) {
+        let correct, question, options, correctIndex;
+
+        switch (difficulty) {
+            case 1: {
+                let item = pickRandom(SentenceTransformData.affirmative.slice(0,3));
+                let negV = item.verb==='am'?'am not':(item.verb==='is'?"isn't":"aren't");
+                correct = `${item.sub} ${negV} ${item.rest}`;
+                question = `改为否定句：${item.sub} ${item.verb} ${item.rest}`;
+                options = shuffle([correct, `${item.sub} don't ${item.verb} ${item.rest}`, `${item.sub} ${item.verb} not ${item.rest}`, `${item.sub} doesn't ${item.verb} ${item.rest}`]);
+                break;
+            }
+            case 2: {
+                let item = pickRandom(SentenceTransformData.affirmative);
+                let capV = item.verb.charAt(0).toUpperCase() + item.verb.slice(1);
+                correct = `${capV} ${item.sub} ${item.rest.replace('.','')}?`;
+                question = `改为疑问句：${item.sub} ${item.verb} ${item.rest}`;
+                options = shuffle([correct, `${item.sub} ${item.verb} ${item.rest.replace('.','')}?`, `Do ${item.sub} ${item.rest.replace('.','')}?`, `Does ${item.sub} ${item.rest.replace('.','')}?`]);
+                break;
+            }
+            case 3: {
+                let item = pickRandom(SentenceTransformData.presentVerbs);
+                let isThird = ['he','she','it'].includes(item.sub.toLowerCase());
+                let rawVerb = isThird ? item.verb.replace(/s$/,'') : item.verb;
+                correct = isThird
+                    ? `Does ${item.sub} ${rawVerb} ${item.obj}`
+                    : `Do ${item.sub} ${item.verb} ${item.obj}`;
+                correct += '?';
+                question = `改为疑问句：${item.sub} ${item.verb} ${item.obj}`;
+                options = shuffle([correct, `${item.sub} ${item.verb} ${item.obj}?`, `Is ${item.sub} ${rawVerb} ${item.obj}?`, `Are ${item.sub} ${rawVerb} ${item.obj}?`]);
+                break;
+            }
+            case 4: {
+                let item = pickRandom(SentenceTransformData.affirmative.slice(3));
+                correct = `They are ${item.rest.replace('friends.','friends.').replace('happy.','happy.').replace('big.','big.')}`;
+                if (item.sub==='We') correct = `They are ${item.rest}`;
+                question = `改为复数形式：${item.sub} ${item.verb} ${item.rest}`;
+                options = shuffle([`They are ${item.rest}`, `They is ${item.rest}`, `${item.sub} are ${item.rest}`, `Them ${item.verb} ${item.rest}`]);
+                break;
+            }
+            case 5: {
+                let items = [
+                    { q:'She reads books. (改为现在进行时)', a:'She is reading books.', opts:['She is reading books.','She reads books.','She reading books.','She do reading books.'] },
+                    { q:'I go to school by bus. (改为否定句)', a:'I don\'t go to school by bus.', opts:["I don't go to school by bus.",'I not go to school by bus.',"I doesn't go to school by bus.",'I am not go to school by bus.'] },
+                    { q:'They will play football. (改为疑问句)', a:'Will they play football?', opts:['Will they play football?','Do they will play football?','They will play football?','Are they will play football?'] }
+                ];
+                let item = pickRandom(items);
+                correct = item.a;
+                question = item.q;
+                options = shuffle(item.opts);
+                break;
+            }
+            default: return generateSentenceTransformQuestion(1);
+        }
+        correctIndex = options.indexOf(correct);
+        if (correctIndex === -1) { correctIndex = 0; options[0] = correct; }
+        return { question, options: options.map((o,i) => `${'ABCD'[i]}. ${o}`), correct: correctIndex, key: `ST_${difficulty}_${Date.now()}` };
+    }
+
+    // ==================== 答题流程控制 ====================
+    let currentQuestion = null;
+    let isAnswering = false;
+    let challengeGroupIndex = 0;  // 当前第几组 (0-based)
+
+    function startQuiz(levelId) {
+        AudioSystem.init();
+        gameData.currentLevel = levelId;
+        saveGameData(gameData);
+
+        document.getElementById('levelSelect').style.display = 'none';
+        document.getElementById('quizScreen').classList.add('visible');
+
+        const ld = getCurrentLevelData();
+        challengeGroupIndex = Math.floor(ld.groupAnswered / 5);
+        updateChallengeDots();
+        showNextQuestion();
+    }
+
+    function showNextQuestion() {
+        const ld = getCurrentLevelData();
+        const difficulty = ld.difficulty;
+        const groupIdx = ld.groupAnswered % 5;
+        const totalInGroup = Math.floor(ld.groupAnswered / 5); // not used directly
+
+        // 更新进度
+        document.getElementById('quizProgress').textContent =
+            `Lv.${difficulty} · 第 ${ld.totalAnswered % 100 + 1}/100 题`;
+        document.querySelector('.challenge-group').textContent =
+            `🏆 第 ${Math.floor(ld.totalAnswered / 5) + 1} 组挑战`;
+
+        updateChallengeDots();
+
+        // 生成题目
+        currentQuestion = generateQuestion(gameData.currentLevel, difficulty);
+        document.getElementById('questionText').textContent = currentQuestion.question;
+        document.getElementById('questionText').innerHTML =
+            currentQuestion.question.replace(/___/g, '<span class="blank">___</span>');
+
+        // 渲染选项按钮
+        const grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+        currentQuestion.options.forEach((text, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = text;
+            btn.addEventListener('click', () => onAnswerClick(i, btn));
+            grid.appendChild(btn);
+        });
+
+        isAnswering = false;
+    }
+
+    function onAnswerClick(selectedIndex, clickedBtn) {
+        if (isAnswering) return;
+        isAnswering = true;
+
+        AudioSystem.init();
+        disableAllOptions();
+
+        const correctIndex = currentQuestion.correct;
+        const ld = getCurrentLevelData();
+
+        if (selectedIndex === correctIndex) {
+            // 正确
+            clickedBtn.classList.add('correct-answer');
+            AudioSystem.playCorrect();
+            showFeedback('⭐✨', true);
+            ld.groupCorrect[ld.groupAnswered % 5] = true;
+        } else {
+            // 错误
+            clickedBtn.classList.add('wrong-answer');
+            AudioSystem.playWrong();
+            // 高亮正确答案
+            const allBtns = document.querySelectorAll('#optionsGrid .option-btn');
+            allBtns[correctIndex].classList.add('correct-answer');
+            showFeedback('💪😊', false);
+            ld.groupCorrect[ld.groupAnswered % 5] = false;
+        }
+
+        // 更新答题计数
+        ld.groupAnswered++;
+        ld.totalAnswered++;
+
+        // 检查难度提升
+        const oldDifficulty = ld.difficulty;
+        ld.difficulty = Math.min(5, Math.floor(ld.totalAnswered / 100) + 1);
+        if (ld.difficulty > oldDifficulty) {
+            setTimeout(() => {
+                showToast(`🎉 难度提升至 Lv.${ld.difficulty}！`);
+                AudioSystem.playLevelUp();
+            }, 400);
+        }
+
+        // 检查挑战组是否完成
+        if (ld.groupAnswered % 5 === 0) {
+            const groupStart = ld.groupAnswered - 5;
+            const allCorrect = ld.groupCorrect.every(v => v === true);
+            // 重新生成新组的正确标记
+            ld.groupCorrect = [true, true, true, true, true];
+
+            if (allCorrect) {
+                setTimeout(() => {
+                    addStar();
+                    showConfetti();
+                    AudioSystem.playPerfect();
+                    showToast('🌟 完美挑战！获得 1 颗星！');
+                }, 600);
+            } else {
+                setTimeout(() => {
+                    showToast('继续加油，下一组争取全对~');
+                }, 600);
+            }
+        }
+
+        saveGameData(gameData);
+        updateStatusBar();
+
+        // 0.8秒后自动加载下一题
+        setTimeout(() => {
+            updateChallengeDots();
+            showNextQuestion();
+        }, 1000);
+    }
+
+    function disableAllOptions() {
+        document.querySelectorAll('#optionsGrid .option-btn').forEach(btn => {
+            btn.classList.add('disabled');
+        });
+    }
+
+    function updateChallengeDots() {
+        const ld = getCurrentLevelData();
+        const container = document.getElementById('challengeDots');
+        const dots = container.querySelectorAll('.challenge-dot');
+
+        dots.forEach((dot, i) => {
+            dot.className = 'challenge-dot';
+            const groupStart = Math.floor(ld.groupAnswered / 5) * 5;
+            const answerIdx = i;
+            if (answerIdx < ld.groupAnswered % 5) {
+                const idx = answerIdx;
+                dot.classList.add(ld.groupCorrect[idx] ? 'correct' : 'wrong');
+            }
+        });
+    }
+
+    function showFeedback(emoji, isCorrect) {
+        const layer = document.getElementById('feedbackLayer');
+        const el = document.createElement('div');
+        el.className = 'feedback-overlay';
+        el.textContent = emoji;
+        el.style.color = isCorrect ? '#4caf50' : '#ff9800';
+        layer.appendChild(el);
+        setTimeout(() => el.remove(), 800);
+    }
+
+    function showToast(msg) {
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1600);
+    }
+
+    function showConfetti() {
+        const container = document.getElementById('confettiLayer');
+        const colors = ['#ffd54f','#ff9800','#4caf50','#42a5f5','#ab47bc','#f44336','#e91e63','#00bcd4'];
+        const shapes = ['●','■','▲','★','♦','❤'];
+
+        for (let i = 0; i < 60; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.textContent = pickRandom(shapes);
+            piece.style.left = randInt(0, 100) + '%';
+            piece.style.color = pickRandom(colors);
+            piece.style.setProperty('--fall-dur', randInt(2, 4) + 's');
+            piece.style.setProperty('--fall-delay', (Math.random() * 0.8) + 's');
+            piece.style.setProperty('--rot', randInt(-720, 720) + 'deg');
+            piece.style.fontSize = randInt(10, 20) + 'px';
+            container.appendChild(piece);
+            setTimeout(() => piece.remove(), 4000);
+        }
+    }
+
+    // ==================== UI 更新 ====================
+    function updateStatusBar() {
+        const ld = getCurrentLevelData();
+        const levelNames = {
+            beVerb: 'be动词', nounPlural: '名词复数', pronoun: '代词与物主代词',
+            article: '冠词a/an/the', preposition: '介词', presentSimple: '一般现在时',
+            presentContinuous: '现在进行时', futureTense: '一般将来时',
+            questionWord: '疑问词', sentenceTransform: '句型转换'
+        };
+        const levelName = levelNames[gameData.currentLevel] || 'be动词';
+
+        document.getElementById('statusLevel').innerHTML =
+            `关卡：${levelName} <span class="level-badge">Lv.${ld.difficulty}</span>`;
+        document.getElementById('statusCount').textContent =
+            `已答 ${ld.totalAnswered % 100}/100 题`;
+        document.getElementById('statusTodayStars').textContent =
+            `今日⭐×${getTodayStars()}`;
+        document.getElementById('statusTotalStars').textContent =
+            `总⭐×${getTotalStars()}`;
+    }
+
+    // ==================== 星星记录弹窗 ====================
+    let calendarYear, calendarMonth;
+
+    function getDaysInMonth(year, month) {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    function getFirstDayOfMonth(year, month) {
+        return new Date(year, month, 1).getDay();
+    }
+
+    function renderCalendar() {
+        const label = document.getElementById('calendarMonthLabel');
+        label.textContent = `${calendarYear}年 ${calendarMonth + 1}月`;
+
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const dayHeaders = ['日','一','二','三','四','五','六'];
+        dayHeaders.forEach(h => {
+            const dh = document.createElement('div');
+            dh.className = 'calendar-day-header';
+            dh.textContent = h;
+            grid.appendChild(dh);
+        });
+
+        const daysInMonth = getDaysInMonth(calendarYear, calendarMonth);
+        const firstDay = getFirstDayOfMonth(calendarYear, calendarMonth);
+        const today = getTodayKey();
+
+        // 填充空白
+        for (let i = 0; i < firstDay; i++) {
+            const blank = document.createElement('div');
+            grid.appendChild(blank);
+        }
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const stars = gameData.dailyStars[dateStr] || 0;
+
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day';
+            if (stars > 0) cell.classList.add('has-stars');
+            if (dateStr === today) cell.classList.add('today');
+            cell.innerHTML = `${d}${stars > 0 ? `<span class="star-count">⭐${stars}</span>` : ''}`;
+            grid.appendChild(cell);
+        }
+    }
+
+    function openStarModal() {
+        const now = new Date();
+        calendarYear = now.getFullYear();
+        calendarMonth = now.getMonth();
+        document.getElementById('starModal').classList.remove('hidden');
+        renderCalendar();
+    }
+
+    function closeStarModal() {
+        document.getElementById('starModal').classList.add('hidden');
+    }
+
+    // ==================== 关卡选择区渲染 ====================
+    function renderLevelGrid() {
+        const levelConfigs = [
+            { id: 'beVerb', icon: '🔤', name: 'be动词', enabled: true },
+            { id: 'nounPlural', icon: '📚', name: '名词复数', enabled: true },
+            { id: 'pronoun', icon: '👤', name: '代词与物主代词', enabled: true },
+            { id: 'article', icon: '📝', name: '冠词a/an/the', enabled: true },
+            { id: 'preposition', icon: '📍', name: '介词', enabled: true },
+            { id: 'presentSimple', icon: '⏰', name: '一般现在时', enabled: true },
+            { id: 'presentContinuous', icon: '🏃', name: '现在进行时', enabled: true },
+            { id: 'futureTense', icon: '🔮', name: '一般将来时', enabled: true },
+            { id: 'questionWord', icon: '❓', name: '疑问词', enabled: true },
+            { id: 'sentenceTransform', icon: '🔄', name: '句型转换', enabled: true }
+        ];
+
+        const grid = document.getElementById('levelGrid');
+        grid.innerHTML = '';
+
+        levelConfigs.forEach(config => {
+            const btn = document.createElement('button');
+            btn.className = 'level-btn';
+            if (!config.enabled) btn.classList.add('placeholder');
+
+            if (gameData.currentLevel === config.id) btn.classList.add('active');
+
+            const lvData = gameData.levels[config.id];
+            btn.innerHTML = `
+                <span class="btn-icon">${config.icon}</span>
+                ${config.name}
+                <span class="btn-stars">⭐×${lvData.stars} Lv.${lvData.difficulty}</span>
+            `;
+
+            if (config.enabled) {
+                btn.addEventListener('click', () => {
+                    AudioSystem.init();
+                    gameData.currentLevel = config.id;
+                    saveGameData(gameData);
+                    updateStatusBar();
+                    startQuiz(config.id);
+                });
+            } else {
+                btn.title = '即将开放，敬请期待~';
+            }
+
+            grid.appendChild(btn);
+        });
+    }
+
+    // ==================== 事件绑定 ====================
+    function bindEvents() {
+        document.getElementById('backBtn').addEventListener('click', () => {
+            document.getElementById('quizScreen').classList.remove('visible');
+            document.getElementById('levelSelect').style.display = 'block';
+            updateStatusBar();
+            renderLevelGrid();
+        });
+
+        document.getElementById('starRecordBtn').addEventListener('click', () => {
+            AudioSystem.init();
+            openStarModal();
+        });
+
+        document.getElementById('modalCloseBtn').addEventListener('click', closeStarModal);
+
+        document.getElementById('starModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeStarModal();
+        });
+
+        document.getElementById('calendarPrev').addEventListener('click', () => {
+            calendarMonth--;
+            if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+            renderCalendar();
+        });
+
+        document.getElementById('calendarNext').addEventListener('click', () => {
+            calendarMonth++;
+            if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+            renderCalendar();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeStarModal();
+        });
+    }
+
+    // ==================== 星空背景生成 ====================
+    function generateStars() {
+        const container = document.getElementById('starsContainer');
+        for (let i = 0; i < 120; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2.5 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
+            star.style.setProperty('--delay', Math.random() * 5 + 's');
+            container.appendChild(star);
+        }
+    }
+
+    // ==================== 初始化 ====================
+    function init() {
+        generateStars();
+        renderLevelGrid();
+        updateStatusBar();
+        bindEvents();
+
+        // 如果之前正在答题，恢复quiz界面
+        // 为了简洁，这里直接显示关卡选择
+        document.getElementById('quizScreen').classList.remove('visible');
+        document.getElementById('levelSelect').style.display = 'block';
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+    // 兜底
+    window.addEventListener('load', () => {
+        if (!document.getElementById('levelGrid').children.length) init();
+    });
+
+    console.log('🚀 小学英语语法大闯关 v4 - be动词关卡已就绪！');
+    console.log('📋 其他9个关卡的题目生成函数将在后续版本中实现');
+    </script>
+</body>
+</html>
